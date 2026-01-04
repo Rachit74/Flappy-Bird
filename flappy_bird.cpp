@@ -1,5 +1,16 @@
 #include <SFML/Graphics.hpp>
 
+#include <cstdlib>
+#include <ctime>
+
+#define PIPE_WIDTH 70
+#define PIPE_HEIGHT 160
+#define PIPE_SPEED 120
+#define PIPE_GAP 160
+#define SAFE_MARGIN 70
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+
 // check window border hit
 void checkBorderHit(sf::CircleShape& Bird) {
     float radius = Bird.getRadius();
@@ -12,22 +23,49 @@ void checkBorderHit(sf::CircleShape& Bird) {
         Bird.setPosition(birdPosition);
     }
 
-    if (birdPosition.y > 600-diameter) {
-        birdPosition.y = 600-diameter;
+    if (birdPosition.y > WINDOW_HEIGHT-diameter) {
+        birdPosition.y = WINDOW_HEIGHT-diameter;
         Bird.setPosition(birdPosition);
     }
 }
 
+// move pipe function
+void movePipe(sf::RectangleShape& pipe, float dt) {
+    sf::Vector2f pipePosition = pipe.getPosition();
+    pipePosition.x -= PIPE_SPEED * dt;
+    pipe.setPosition(pipePosition);
+
+}
+
+// reset pipe function
+void resetPipes() {};
+
 int main() {
 
-    sf::RenderWindow window(sf::VideoMode(800,600), "Flappy bird c++");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT), "Flappy bird c++");
 
     // Clock to measure time between frames (deltaTime)
     sf::Clock clock;
 
+    // std::srand(static_cast<unsigned>(std::time(nullptr)));
+
+
+    // Bird Object
     sf::CircleShape Bird(25.f);
     Bird.setFillColor(sf::Color::Green);
     Bird.setPosition(100.f, 300.f);
+
+
+    // Top pipe
+    sf::RectangleShape topPipe(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
+    topPipe.setFillColor(sf::Color::Red);
+    topPipe.setPosition(800.f,0);
+
+    // Bottom pipe
+    sf::RectangleShape bottomPipe(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
+    bottomPipe.setFillColor(sf::Color::Red);
+    bottomPipe.setPosition(800,600-PIPE_HEIGHT);
+
 
     // How fast the bird is moving up/down
     float velocity = 0.f;
@@ -43,11 +81,13 @@ int main() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+        if (event.type == sf::Event::KeyPressed &&
+            event.key.code == sf::Keyboard::Space) {
             velocity = -350.f;
         }
+        }
+
 
         // Time passed since last frame (in seconds)
         float dt = clock.restart().asSeconds();
@@ -64,8 +104,13 @@ int main() {
 
         checkBorderHit(Bird);
 
+        movePipe(topPipe, dt);
+        movePipe(bottomPipe, dt);
+
         window.clear();
         window.draw(Bird);
+        window.draw(topPipe);
+        window.draw(bottomPipe);
         window.display();
     }
 }

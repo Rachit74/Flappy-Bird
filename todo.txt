@@ -1,4 +1,0 @@
-- make a bird object
-- add gravity to bird object
-- Make pipes
-- makes the screen move
