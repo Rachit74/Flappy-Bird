@@ -6,8 +6,6 @@
 #define PIPE_WIDTH 70
 #define PIPE_HEIGHT 160
 #define PIPE_SPEED 120
-#define PIPE_GAP 160
-#define SAFE_MARGIN 70
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
@@ -37,8 +35,18 @@ void movePipe(sf::RectangleShape& pipe, float dt) {
 
 }
 
-// reset pipe function
-void resetPipes() {};
+
+// reset pipe pairs
+void resetPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe) {
+    
+    // both pipes have same x position
+    float x = topPipe.getPosition().x;
+
+    if (x + PIPE_WIDTH < 0) {
+        topPipe.setPosition(WINDOW_WIDTH, 0);
+        bottomPipe.setPosition(WINDOW_WIDTH, WINDOW_HEIGHT-PIPE_HEIGHT);
+    }
+}
 
 int main() {
 
@@ -106,6 +114,8 @@ int main() {
 
         movePipe(topPipe, dt);
         movePipe(bottomPipe, dt);
+
+        resetPipes(topPipe, bottomPipe);
 
         window.clear();
         window.draw(Bird);
