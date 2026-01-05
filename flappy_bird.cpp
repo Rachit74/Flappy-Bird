@@ -52,6 +52,17 @@ void resetPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe) {
     }
 }
 
+void initialReset(sf::RectangleShape& topPipe,
+                  sf::RectangleShape& bottomPipe,
+                  float startX)
+{
+    int gapY = gapGen();
+
+    topPipe.setPosition(startX, gapY - PIPE_HEIGHT);
+    bottomPipe.setPosition(startX, gapY + PIPE_GAP);
+}
+
+
 int main() {
 
 
@@ -90,6 +101,10 @@ int main() {
     // Spawn it further to the right
     topPipe2.setPosition(WINDOW_WIDTH + 400, 0);
     bottomPipe2.setPosition(WINDOW_WIDTH + 400, WINDOW_HEIGHT - PIPE_HEIGHT);
+
+    initialReset(topPipe, bottomPipe, WINDOW_WIDTH);
+    initialReset(topPipe2, bottomPipe2, WINDOW_WIDTH + 400);
+
 
 
 
