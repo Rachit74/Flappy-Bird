@@ -6,6 +6,7 @@
 
 
 // check window border hit
+// checks if the bird has hit top and bottom window borders
 void checkBorderHit(sf::CircleShape& Bird) {
     float radius = Bird.getRadius();
     float diameter = radius * 2;
@@ -25,9 +26,18 @@ void checkBorderHit(sf::CircleShape& Bird) {
 
 // move pipe function
 void movePipe(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe, float dt) {
-    // sf::Vector2f pipePosition = topPipe.getPosition();
-    // pipePosition.x -= PIPE_SPEED * dt;
-    // pipe.setPosition(pipePosition);
+
+    // we can use Vector2f too but that would be redundant
+    /*
+    sf::Vector2f pos_1 = topPipe.getPosition();
+    sf::Vector2f pos_2 = bottomPipe.getPosition();
+
+    pos_1.x -= PIPE_SPEED * dt;
+    pos_2.x -= PIPE_SPEED * dt;
+
+    topPipe.setPosition(pos_1.x, pos_1.y);
+    bottomPipe.setPosition(pos_2.x, pos_2.y);
+    */
 
     float x = topPipe.getPosition().x - PIPE_SPEED * dt;
 
@@ -38,7 +48,12 @@ void movePipe(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe, float
 }
 
 
-// reset pipe pairs
+/*
+restPipes function
+resets pipe postion to far right of the window so they can reapper
+uses the gapGen function to generate the Y position of the gap box
+adjusts the height of the pipes according to the randomly generated value by gapGen
+*/
 void resetPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe) {
 
     float x = topPipe.getPosition().x;
@@ -52,15 +67,19 @@ void resetPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe) {
     }
 }
 
-void initialReset(sf::RectangleShape& topPipe,
-                  sf::RectangleShape& bottomPipe,
-                  float startX)
-{
+/* initPipes function
+initilizes the first two pipe pairs to have gap between them
+solves the overlap bug because of increased PIPE_HEIGHT
+similar work as the restPipes function but just called once when the games starts for first two pairs
+*/
+void initPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe, float startX) {
     int gapY = gapGen();
 
     topPipe.setPosition(startX, gapY - PIPE_HEIGHT);
     bottomPipe.setPosition(startX, gapY + PIPE_GAP);
 }
+
+
 
 
 int main() {
@@ -70,8 +89,6 @@ int main() {
 
     // Clock to measure time between frames (deltaTime)
     sf::Clock clock;
-
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
 
 
     // Bird Object
@@ -91,20 +108,19 @@ int main() {
     bottomPipe.setFillColor(sf::Color::Red);
     bottomPipe.setPosition(800,600-PIPE_HEIGHT);
 
-    // PIPE PAIR 2
+    // PIPE PAIR 2 (Pipe pair 2 will spawn to further right on the screen)
+    // Top Pipe
     sf::RectangleShape topPipe2(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
-    sf::RectangleShape bottomPipe2(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
-
     topPipe2.setFillColor(sf::Color::Red);
-    bottomPipe2.setFillColor(sf::Color::Red);
-
-    // Spawn it further to the right
     topPipe2.setPosition(WINDOW_WIDTH + 400, 0);
+
+    // Bottom Pipe
+    sf::RectangleShape bottomPipe2(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
+    bottomPipe2.setFillColor(sf::Color::Red);
     bottomPipe2.setPosition(WINDOW_WIDTH + 400, WINDOW_HEIGHT - PIPE_HEIGHT);
 
-    initialReset(topPipe, bottomPipe, WINDOW_WIDTH);
-    initialReset(topPipe2, bottomPipe2, WINDOW_WIDTH + 400);
-
+    initPipes(topPipe, bottomPipe, WINDOW_WIDTH);
+    initPipes(topPipe2, bottomPipe2, WINDOW_WIDTH + 400);
 
 
 
