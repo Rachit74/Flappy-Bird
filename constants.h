@@ -1,0 +1,7 @@
+#define PIPE_WIDTH 70
+#define PIPE_HEIGHT 600
+#define PIPE_SPEED 160
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+#define PIPE_GAP 200
+#define PIPE_MIN_Y 50

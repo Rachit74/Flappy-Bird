@@ -1,15 +1,9 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
-#include <cstdlib>
-#include <ctime>
+#include "constants.h"
+#include "gap_gen.h"
 
-#define PIPE_WIDTH 70
-#define PIPE_HEIGHT 800
-#define PIPE_SPEED 160
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
-#define PIPE_GAP 100
-#define PIPE_MIN_Y 50
 
 // check window border hit
 void checkBorderHit(sf::CircleShape& Bird) {
@@ -50,9 +44,8 @@ void resetPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe) {
     float x = topPipe.getPosition().x;
 
     if (x + PIPE_WIDTH < 0) {
-
-        int maxOffset = WINDOW_HEIGHT - PIPE_GAP - PIPE_MIN_Y * 2;
-        int gapY = PIPE_MIN_Y + std::rand() % maxOffset;
+        
+        int gapY = gapGen();
 
         topPipe.setPosition(WINDOW_WIDTH, gapY - PIPE_HEIGHT);
         bottomPipe.setPosition(WINDOW_WIDTH, gapY + PIPE_GAP);
@@ -60,6 +53,7 @@ void resetPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe) {
 }
 
 int main() {
+
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT), "Flappy bird c++");
 
