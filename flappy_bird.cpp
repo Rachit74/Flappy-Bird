@@ -5,7 +5,7 @@
 
 #define PIPE_WIDTH 70
 #define PIPE_HEIGHT 160
-#define PIPE_SPEED 120
+#define PIPE_SPEED 160
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
@@ -28,10 +28,15 @@ void checkBorderHit(sf::CircleShape& Bird) {
 }
 
 // move pipe function
-void movePipe(sf::RectangleShape& pipe, float dt) {
-    sf::Vector2f pipePosition = pipe.getPosition();
-    pipePosition.x -= PIPE_SPEED * dt;
-    pipe.setPosition(pipePosition);
+void movePipe(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe, float dt) {
+    // sf::Vector2f pipePosition = topPipe.getPosition();
+    // pipePosition.x -= PIPE_SPEED * dt;
+    // pipe.setPosition(pipePosition);
+
+    float x = topPipe.getPosition().x;
+    x -= PIPE_SPEED * dt;
+    topPipe.setPosition(x, 0);
+    bottomPipe.setPosition(x, WINDOW_HEIGHT-PIPE_HEIGHT);
 
 }
 
@@ -64,6 +69,7 @@ int main() {
     Bird.setPosition(100.f, 300.f);
 
 
+    // PIPE PAIR 1
     // Top pipe
     sf::RectangleShape topPipe(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
     topPipe.setFillColor(sf::Color::Red);
@@ -73,6 +79,18 @@ int main() {
     sf::RectangleShape bottomPipe(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
     bottomPipe.setFillColor(sf::Color::Red);
     bottomPipe.setPosition(800,600-PIPE_HEIGHT);
+
+    // PIPE PAIR 2
+    sf::RectangleShape topPipe2(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
+    sf::RectangleShape bottomPipe2(sf::Vector2f(PIPE_WIDTH, PIPE_HEIGHT));
+
+    topPipe2.setFillColor(sf::Color::Red);
+    bottomPipe2.setFillColor(sf::Color::Red);
+
+    // Spawn it further to the right
+    topPipe2.setPosition(WINDOW_WIDTH + 400, 0);
+    bottomPipe2.setPosition(WINDOW_WIDTH + 400, WINDOW_HEIGHT - PIPE_HEIGHT);
+
 
 
     // How fast the bird is moving up/down
@@ -112,15 +130,18 @@ int main() {
 
         checkBorderHit(Bird);
 
-        movePipe(topPipe, dt);
-        movePipe(bottomPipe, dt);
+        movePipe(topPipe, bottomPipe, dt);
+        movePipe(topPipe2, bottomPipe2, dt);
 
         resetPipes(topPipe, bottomPipe);
+        resetPipes(topPipe2, bottomPipe2);
 
         window.clear();
         window.draw(Bird);
         window.draw(topPipe);
         window.draw(bottomPipe);
+        window.draw(topPipe2);
+        window.draw(bottomPipe2);
         window.display();
     }
 }
