@@ -4,10 +4,12 @@
 #include <ctime>
 
 #define PIPE_WIDTH 70
-#define PIPE_HEIGHT 160
+#define PIPE_HEIGHT 800
 #define PIPE_SPEED 160
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
+#define PIPE_GAP 100
+#define PIPE_MIN_Y 50
 
 // check window border hit
 void checkBorderHit(sf::CircleShape& Bird) {
@@ -33,23 +35,27 @@ void movePipe(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe, float
     // pipePosition.x -= PIPE_SPEED * dt;
     // pipe.setPosition(pipePosition);
 
-    float x = topPipe.getPosition().x;
-    x -= PIPE_SPEED * dt;
-    topPipe.setPosition(x, 0);
-    bottomPipe.setPosition(x, WINDOW_HEIGHT-PIPE_HEIGHT);
+    float x = topPipe.getPosition().x - PIPE_SPEED * dt;
+
+    topPipe.setPosition(x, topPipe.getPosition().y);
+    bottomPipe.setPosition(x, bottomPipe.getPosition().y);
+
 
 }
 
 
 // reset pipe pairs
 void resetPipes(sf::RectangleShape& topPipe, sf::RectangleShape& bottomPipe) {
-    
-    // both pipes have same x position
+
     float x = topPipe.getPosition().x;
 
     if (x + PIPE_WIDTH < 0) {
-        topPipe.setPosition(WINDOW_WIDTH, 0);
-        bottomPipe.setPosition(WINDOW_WIDTH, WINDOW_HEIGHT-PIPE_HEIGHT);
+
+        int maxOffset = WINDOW_HEIGHT - PIPE_GAP - PIPE_MIN_Y * 2;
+        int gapY = PIPE_MIN_Y + std::rand() % maxOffset;
+
+        topPipe.setPosition(WINDOW_WIDTH, gapY - PIPE_HEIGHT);
+        bottomPipe.setPosition(WINDOW_WIDTH, gapY + PIPE_GAP);
     }
 }
 
@@ -60,7 +66,7 @@ int main() {
     // Clock to measure time between frames (deltaTime)
     sf::Clock clock;
 
-    // std::srand(static_cast<unsigned>(std::time(nullptr)));
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 
 
     // Bird Object
