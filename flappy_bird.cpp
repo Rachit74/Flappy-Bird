@@ -130,7 +130,7 @@ int main() {
     // Clock to measure time between frames (deltaTime)
     sf::Clock clock;
 
-    Bird Bird{100.f,300.f};
+    Bird bird{100.f,300.f};
 
 
     // game loop
@@ -143,10 +143,25 @@ int main() {
                 window.close();
             }
 
-        if (event.type == sf::Event::KeyPressed &&
-            event.key.code == sf::Keyboard::Space) {
-                Bird.jump();
+            if (event.type == sf::Event::KeyPressed &&
+                event.key.code == sf::Keyboard::Space) {
+                    bird.jump();
+                }
+
+            if (current_game_state == STATE_OVER && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+                current_game_state = STATE_PLAYING;
+
+                // reset bird
+                bird = Bird(100.f, 300.f);
+
+
+
+                // reset pipes
+                pipes.clear();
+                pipes.emplace_back(WINDOW_WIDTH);
+                pipes.emplace_back(WINDOW_WIDTH + 400);
             }
+
         }
 
 
@@ -158,15 +173,15 @@ int main() {
         // state handling
         if (current_game_state == STATE_PLAYING) {
             
-            Bird.update(dt);
-            Bird.checkBorderHit(current_game_state);
+            bird.update(dt);
+            bird.checkBorderHit(current_game_state);
 
 
 
             for (auto& pipe: pipes) {
                 pipe.update(dt);
                 pipe.reset();
-                if (pipe.collidesWith(Bird.bird)) {
+                if (pipe.collidesWith(bird.bird)) {
                     current_game_state = STATE_OVER;
                 }            
             }
@@ -176,7 +191,7 @@ int main() {
             window.draw(pipe.top);
             window.draw(pipe.bottom);
         }
-        window.draw(Bird.bird);
+        window.draw(bird.bird);
 
         if (current_game_state == STATE_OVER) {
             drawGameOverScreen(window, font);
