@@ -14,7 +14,7 @@ enum GameState {
 struct PipePair {
     sf::RectangleShape top;
     sf::RectangleShape bottom;
-
+    bool scored = false;
 
     PipePair(float start_x_position) {
         top.setSize({PIPE_WIDTH, PIPE_HEIGHT});
@@ -44,6 +44,8 @@ struct PipePair {
 
             top.setPosition(WINDOW_WIDTH, gapY - PIPE_HEIGHT);
             bottom.setPosition(WINDOW_WIDTH, gapY + PIPE_GAP);
+
+            scored = false;
         }
     }
 
@@ -112,6 +114,8 @@ void drawGameOverScreen(sf::RenderWindow& window, sf::Font& font) {
 
 int main() {
 
+    int score = 0;
+
     sf::Font font;
     if (!font.loadFromFile("ubuntu-font.ttf")) {
         std::cerr << "Unable to load font!\n";
@@ -154,8 +158,6 @@ int main() {
                 // reset bird
                 bird = Bird(100.f, 300.f);
 
-
-
                 // reset pipes
                 pipes.clear();
                 pipes.emplace_back(WINDOW_WIDTH);
@@ -183,7 +185,18 @@ int main() {
                 pipe.reset();
                 if (pipe.collidesWith(bird.bird)) {
                     current_game_state = STATE_OVER;
-                }            
+                }
+
+                // score logic
+                float pipeX = pipe.top.getPosition().x + PIPE_WIDTH;
+                float birdX = bird.bird.getPosition().x;
+
+                if (!pipe.scored && birdX > pipeX) {
+                    score++;
+                    std::cout << "Score: " << score << "\n";
+                    pipe.scored = true;
+                }
+
             }
         }
 
