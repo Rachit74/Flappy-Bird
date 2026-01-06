@@ -49,7 +49,7 @@ struct PipePair {
 
 struct Bird {
     sf::CircleShape bird;
-    float velocity;
+    float velocity = 0.f;
 
     Bird(float start_x_position, float start_y_position) {
         bird.setRadius(20.f);
@@ -89,8 +89,6 @@ struct Bird {
 };
 
 
-
-
 int main() {
 
     // Pipes Vector;
@@ -105,11 +103,6 @@ int main() {
     sf::Clock clock;
 
     Bird Bird{100.f,300.f};
-
-
-
-    // How fast the bird is moving up/down
-    float velocity = 0.f;
 
 
     // game loop
@@ -130,10 +123,7 @@ int main() {
 
 
         // Time passed since last frame (in seconds)
-        float dt = clock.restart().asSeconds();
-
-        // Gravity makes the bird fall faster every frame
-        
+        float dt = clock.restart().asSeconds();        
 
 
         Bird.update(dt);
