@@ -112,6 +112,20 @@ void drawGameOverScreen(sf::RenderWindow& window, sf::Font& font) {
 }
 
 
+void drawScore(sf::RenderWindow& window, sf::Font& font, int& score) {
+    sf::Text scoreText;
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(30);
+    scoreText.setFillColor(sf::Color::White);
+    scoreText.setPosition(20.f, 20.f);
+
+    scoreText.setString("Score: " + std::to_string(score));
+
+    window.draw(scoreText);
+
+
+}
+
 int main() {
 
     int score = 0;
@@ -155,6 +169,8 @@ int main() {
             if (current_game_state == STATE_OVER && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
                 current_game_state = STATE_PLAYING;
 
+                score = 0;
+
                 // reset bird
                 bird = Bird(100.f, 300.f);
 
@@ -193,7 +209,6 @@ int main() {
 
                 if (!pipe.scored && birdX > pipeX) {
                     score++;
-                    std::cout << "Score: " << score << "\n";
                     pipe.scored = true;
                 }
 
@@ -205,6 +220,7 @@ int main() {
             window.draw(pipe.bottom);
         }
         window.draw(bird.bird);
+        drawScore(window, font, score);
 
         if (current_game_state == STATE_OVER) {
             drawGameOverScreen(window, font);
