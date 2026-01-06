@@ -5,3 +5,4 @@
 #define WINDOW_HEIGHT 600
 #define PIPE_GAP 200
 #define PIPE_MIN_Y 50
+#define GRAVITY 700

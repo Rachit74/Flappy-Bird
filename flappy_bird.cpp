@@ -47,24 +47,48 @@ struct PipePair {
 };
 
 
-// check window border hit
-// checks if the bird has hit top and bottom window borders
-void checkBorderHit(sf::CircleShape& Bird) {
-    float radius = Bird.getRadius();
-    float diameter = radius * 2;
+struct Bird {
+    sf::CircleShape bird;
+    float velocity;
 
-    sf::Vector2f birdPosition = Bird.getPosition();
-
-    if (birdPosition.y < 0) {
-        birdPosition.y = 0;
-        Bird.setPosition(birdPosition);
+    Bird(float start_x_position, float start_y_position) {
+        bird.setRadius(20.f);
+        bird.setPosition(start_x_position, start_y_position);
     }
 
-    if (birdPosition.y > WINDOW_HEIGHT-diameter) {
-        birdPosition.y = WINDOW_HEIGHT-diameter;
-        Bird.setPosition(birdPosition);
+    void update(float dt) {
+        velocity += GRAVITY * dt;
+        float y = bird.getPosition().y;
+        float x = bird.getPosition().x;
+        y += velocity * dt;
+        bird.setPosition(x,y);
+        
     }
-}
+
+    void jump() {
+        velocity = -350.f;
+    }
+
+    void checkBorderHit() {
+        float radius = bird.getRadius();
+        float diameter = radius * 2;
+
+        sf::Vector2f pos = bird.getPosition();
+
+        if (pos.y < 0) {
+            pos.y = 0;
+            bird.setPosition(pos);
+        }
+
+        if (pos.y > WINDOW_HEIGHT-diameter) {
+        pos.y = WINDOW_HEIGHT-diameter;
+        bird.setPosition(pos);
+        }
+    }
+
+};
+
+
 
 
 int main() {
@@ -74,23 +98,19 @@ int main() {
     pipes.emplace_back(WINDOW_WIDTH);
     pipes.emplace_back(WINDOW_WIDTH + 400);
 
+
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH,WINDOW_HEIGHT), "Flappy bird c++");
 
     // Clock to measure time between frames (deltaTime)
     sf::Clock clock;
 
-
-    // Bird Object
-    sf::CircleShape Bird(25.f);
-    Bird.setFillColor(sf::Color::Green);
-    Bird.setPosition(100.f, 300.f);
+    Bird Bird{100.f,300.f};
 
 
 
     // How fast the bird is moving up/down
     float velocity = 0.f;
 
-    const float g = 700.f;
 
     // game loop
     while (window.isOpen()) {
@@ -104,7 +124,7 @@ int main() {
 
         if (event.type == sf::Event::KeyPressed &&
             event.key.code == sf::Keyboard::Space) {
-            velocity = -350.f;
+                Bird.jump();
         }
         }
 
@@ -113,22 +133,18 @@ int main() {
         float dt = clock.restart().asSeconds();
 
         // Gravity makes the bird fall faster every frame
-        velocity += g * dt;
+        
 
-        // Get the bird's current position
-        // Move the bird down using its speed
-        // Apply the new position to the bird
-        sf::Vector2f birdPosition = Bird.getPosition();
-        birdPosition.y += velocity * dt;
-        Bird.setPosition(birdPosition);
 
+        Bird.update(dt);
+        Bird.checkBorderHit();
 
 
 
         for (auto& pipe: pipes) {
             pipe.update(dt);
             pipe.reset();
-            if (pipe.collidesWith(Bird)) {
+            if (pipe.collidesWith(Bird.bird)) {
                 std::cout << "Hit\n";
             } else {
                 std::cout << "Not Hitting\n";
@@ -143,7 +159,7 @@ int main() {
             window.draw(pipe.bottom);
         }
 
-        window.draw(Bird);
+        window.draw(Bird.bird);
         window.display();
     }
 }
